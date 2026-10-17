@@ -4,8 +4,8 @@ const cors = require("cors")
 
 const app = express()
 const normalizeOrigin = (value = "") => value.trim().replace(/\/+$/, "").toLowerCase()
-const allowedLocalOrigins = [ "http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:4173", "http://127.0.0.1:4173" ]
-const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
+const allowedLocalOrigins = [ "http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:4173", "http://127.0.0.1:4173", "https://ai-resume-analyzer-and-job-matcher-mu.vercel.app" ]
+const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173" || "https://ai-resume-analyzer-and-job-matcher-mu.vercel.app")
     .split(",")
     .map((origin) => normalizeOrigin(origin))
     .concat(allowedLocalOrigins.map((origin) => normalizeOrigin(origin)))
