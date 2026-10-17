@@ -8,7 +8,7 @@ const normalizeOrigin = (value = "") =>
     value.trim().replace(/\/+$/, "").toLowerCase();
 
 const allowedOrigins = [
-    "https://ai-resume-analyzer-and-job-matcher-mu.vercel.app",
+    "https://ai-resume-analyzer-and-job-matcher-ruby.vercel.app",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "http://localhost:4173",
