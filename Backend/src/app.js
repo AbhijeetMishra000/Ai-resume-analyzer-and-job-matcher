@@ -19,9 +19,6 @@ const allowedOrigins = [
         .filter(Boolean)
 ];
 
-app.use(express.json());
-app.use(cookieParser());
-
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(normalizeOrigin(origin))) {
@@ -35,6 +32,11 @@ app.use(cors({
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
+
+
+app.use(express.json());
+app.use(cookieParser());
+
 
 
 /* require all the routes here */
