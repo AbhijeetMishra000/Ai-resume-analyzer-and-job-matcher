@@ -3,41 +3,39 @@ const cookieParser = require("cookie-parser")
 const cors = require("cors")
 
 const app = express()
-const normalizeOrigin = (value = "") => value.trim().replace(/\/+$/, "").toLowerCase()
-const allowedLocalOrigins = [ "http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:4173", "http://127.0.0.1:4173", "https://ai-resume-analyzer-and-job-matcher-mu.vercel.app" ]
-const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173" || "https://ai-resume-analyzer-and-job-matcher-mu.vercel.app")
-    .split(",")
-    .map((origin) => normalizeOrigin(origin))
-    .concat(allowedLocalOrigins.map((origin) => normalizeOrigin(origin)))
-    .filter(Boolean)
 
-app.use(express.json())
-app.use(cookieParser())
+const normalizeOrigin = (value = "") =>
+    value.trim().replace(/\/+$/, "").toLowerCase();
+
+const allowedOrigins = [
+    "https://ai-resume-analyzer-and-job-matcher-mu.vercel.app",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:4173",
+    "http://127.0.0.1:4173",
+    ...(process.env.CLIENT_URL || "")
+        .split(",")
+        .map(normalizeOrigin)
+        .filter(Boolean)
+];
+
+app.use(express.json());
+app.use(cookieParser());
+
 app.use(cors({
     origin: (origin, callback) => {
-        if (!origin) {
-            return callback(null, true)
+        if (!origin || allowedOrigins.includes(normalizeOrigin(origin))) {
+            return callback(null, true);
         }
 
-        const requestOrigin = normalizeOrigin(origin)
-        const isExactMatch = allowedOrigins.includes(requestOrigin)
-        const isAllowedVercelPreview = allowedOrigins.some((allowedOrigin) => {
-            if (!allowedOrigin.startsWith("https://") || !allowedOrigin.endsWith(".vercel.app")) {
-                return false
-            }
-
-            return requestOrigin.endsWith(".vercel.app")
-        })
-
-        if (isExactMatch || isAllowedVercelPreview) {
-            return callback(null, true)
-        }
-
-        console.log("Blocked by CORS:", requestOrigin, "Allowed:", allowedOrigins)
-        return callback(new Error("Not allowed by CORS"))
+        console.log("Blocked by CORS:", origin);
+        return callback(new Error("Not allowed by CORS"));
     },
-    credentials: true
-}))
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 
 /* require all the routes here */
 const authRouter = require("./routes/auth.routes")
